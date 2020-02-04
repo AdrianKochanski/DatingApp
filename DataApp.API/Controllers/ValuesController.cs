@@ -5,17 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DataApp.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatingApp.API.Controllers
 {
     //próba commit
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ValuesController : ControllerBase
     {
         private readonly DataContext _context;
-        public ValuesController(DataContext context){
+        private readonly IAuthRepository _authRepository;
+        public ValuesController(
+            DataContext context,
+            IAuthRepository authRepository) {
             _context = context;
+            _authRepository = authRepository;
         }
 
         [HttpGet]
@@ -24,6 +30,7 @@ namespace DatingApp.API.Controllers
             return Ok(values);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetValue(int id){
             var value = await _context.Values.FirstOrDefaultAsync(x => x.Id == id);
