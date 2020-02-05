@@ -36,6 +36,7 @@ namespace DataApp.API
             //services.AddControllers();
             services.AddScoped<IAuthRepository,AuthRepository>();
             services.AddCors();
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters

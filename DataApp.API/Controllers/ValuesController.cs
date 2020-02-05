@@ -24,6 +24,7 @@ namespace DatingApp.API.Controllers
             _authRepository = authRepository;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetValues() {
             var values = await _context.Values.ToListAsync();
