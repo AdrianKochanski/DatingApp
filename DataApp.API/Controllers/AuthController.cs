@@ -48,6 +48,8 @@ namespace DataApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForloginDto){
             
+            //throw new Exception("Computer say no!");
+
             var userFromRepo = await _authRepo.Login(
                 userForloginDto.Username.ToLower(), 
                 userForloginDto.Password);
