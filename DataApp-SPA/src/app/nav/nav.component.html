@@ -1,21 +1,21 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-  <div class="container" style="max-width: 1800px; width: 95%;">
-    <a class="navbar-brand" href="#">Dating App</a>
+  <div class="container" routerLinkActive="active" style="max-width: 1800px; width: 95%;">
+    <a class="navbar-brand" [routerLink]="['/home']">Dating App</a>
 
   <ul class="navbar-nav mr-auto">
-    <li class="nav-item active">
-      <a class="nav-link" href="#" *ngIf="loggedIn()">Matches
+    <li class="nav-item" routerLinkActive="active">
+      <a class="nav-link" [routerLink]="['/members']" *ngIf="loggedIn()">Matches
         <span class="sr-only">(current)</span>
       </a>
     </li>
 
-    <li class="nav-item" *ngIf="loggedIn()">
-      <a class="nav-link" href="#">Link</a>
+    <li class="nav-item" *ngIf="loggedIn()" routerLinkActive="active">
+      <a class="nav-link" [routerLink]="['/lists']">Link</a>
     </li>
 
-    <li class="nav-item" *ngIf="loggedIn()">
-      <a class="nav-link" href="#">Messages</a>
+    <li class="nav-item" *ngIf="loggedIn()" routerLinkActive="active">
+      <a class="nav-link" [routerLink]="['/messages']">Messages</a>
     </li>
   </ul>
 
