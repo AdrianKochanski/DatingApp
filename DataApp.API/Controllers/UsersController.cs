@@ -5,6 +5,8 @@ using DataApp.API.Data;
 using DataApp.API.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System;
 
 namespace DataApp.API.Controllers
 {
@@ -39,6 +41,21 @@ namespace DataApp.API.Controllers
             var userToReturn = _mapper.Map<UserForDetailedDto>(user);
 
             return Ok(userToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUder(int id, UserForUpdateDto userForUpdateDto) {
+            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var userFormRepo = await _repo.GetUser(id);
+
+            _mapper.Map(userForUpdateDto, userFormRepo);
+
+            if(await _repo.SaveAll())
+                return NoContent();
+
+            throw new Exception($"Updating user {id} failed on save");
         }
     }
 }
