@@ -77,7 +77,7 @@
           </tab>
 
           <tab heading="Edit Photos">
-            <p>Photo edit will go here</p>
+            <app-photo-editor [photos]="user.photos" (GetMainPhoto)="updateMainPhoto($event)"></app-photo-editor>
           </tab>
 
         </tabset>

@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
 
 namespace DataApp.API.Controllers
 {
@@ -18,11 +19,14 @@ namespace DataApp.API.Controllers
     {
         private readonly IAuthRepository _authRepo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
         public AuthController(
             IAuthRepository authRepo,
-            IConfiguration config){
+            IConfiguration config,
+            IMapper mapper){
             _authRepo = authRepo;
             _config = config;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -79,8 +83,11 @@ namespace DataApp.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
             return Ok(new {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user
             });
         }
     }
