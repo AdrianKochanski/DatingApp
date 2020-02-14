@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/_services/auth.service';
 import { UserService } from 'src/app/_services/user.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
+import { error } from 'protractor';
 
 
 @Component({
@@ -15,7 +16,6 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 export class PhotoEditorComponent implements OnInit {
 
   @Input() photos: Photo[];
-  @Output() GetMainPhoto = new EventEmitter<string>();
   uploader: FileUploader;
   hasBaseDropZoneOver = false;
   response: string;
@@ -67,10 +67,25 @@ export class PhotoEditorComponent implements OnInit {
       this.authServ.decodedToken.nameid, photo.id).subscribe(() => {
       this.currentMain = this.photos.filter(p => p.isMain === true)[0];
       this.currentMain.isMain = false;
-      this.GetMainPhoto.emit(photo.url);
       photo.isMain = true;
+      this.authServ.changeMemberPhoto(photo.url);
+      this.authServ.currentUser.photoUrl = photo.url;
+      localStorage.setItem('user', JSON.stringify(this.authServ.currentUser));
+    // tslint:disable-next-line: no-shadowed-variable
     }, error => {
       this.alertify.error(error);
+    });
+  }
+
+  deletePhoto(id: number) {
+    this.alertify.confirm('Are you sure you want to delete this photo?', () => {
+      this.userServ.deletePhoto(this.authServ.decodedToken.nameid, id).subscribe(() => {
+        this.alertify.success('Photo has been deleted');
+        this.photos.splice(this.photos.findIndex(p => p.id === id),1);
+      // tslint:disable-next-line: no-shadowed-variable
+      }, error => {
+        this.alertify.error(error);
+      });
     });
   }
 }
