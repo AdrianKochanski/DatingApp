@@ -58,6 +58,11 @@ export class PhotoEditorComponent implements OnInit {
           isMain: res.isMain
         };
         this.photos.push(photo);
+        if (photo.isMain) {
+          this.authServ.changeMemberPhoto(photo.url);
+          this.authServ.currentUser.photoUrl = photo.url;
+          localStorage.setItem('user', JSON.stringify(this.authServ.currentUser));
+        }
       }
     };
   }
@@ -81,7 +86,7 @@ export class PhotoEditorComponent implements OnInit {
     this.alertify.confirm('Are you sure you want to delete this photo?', () => {
       this.userServ.deletePhoto(this.authServ.decodedToken.nameid, id).subscribe(() => {
         this.alertify.success('Photo has been deleted');
-        this.photos.splice(this.photos.findIndex(p => p.id === id),1);
+        this.photos.splice(this.photos.findIndex(p => p.id === id), 1);
       // tslint:disable-next-line: no-shadowed-variable
       }, error => {
         this.alertify.error(error);

@@ -39,14 +39,13 @@ namespace DataApp.API.Controllers
             if( await _authRepo.UserExists(user.Username))
                 return BadRequest("Username already exist");
 
-            var userTocreate = new User
-            {
-                Username = user.Username
-            };
+            var userTocreate = _mapper.Map<User>(user);
 
             var createdUser = await _authRepo.Register(userTocreate, user.Password);
-
-            return StatusCode(201);
+            
+            var userToReturn = _mapper.Map<UserForDetailedDto>(createdUser);
+            
+            return CreatedAtRoute("GetUser", new {controller = "Users", Id = createdUser.Id}, userToReturn);
         }
 
         [HttpPost("login")]
