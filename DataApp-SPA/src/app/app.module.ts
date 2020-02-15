@@ -7,11 +7,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FileUploadModule } from 'ng2-file-upload';
 import { NgxGalleryModule } from 'ngx-gallery';
 import { HttpClientModule } from '@angular/common/http';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { AuthGuard } from './_guards/auth.guard';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -69,10 +71,12 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       ReactiveFormsModule,
       BrowserAnimationsModule,
       BsDropdownModule.forRoot(),
+      PaginationModule.forRoot(),
       TabsModule.forRoot(),
       RouterModule.forRoot(appRoutes),
       NgxGalleryModule,
       FileUploadModule,
+      ButtonsModule.forRoot(),
       BsDatepickerModule.forRoot(),
       JwtModule.forRoot({
         config: {
