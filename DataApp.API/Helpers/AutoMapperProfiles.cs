@@ -26,6 +26,7 @@ namespace DataApp.API.Helpers
             CreateMap<Photo, PhotosForReturnDto>();
             CreateMap<PhotoForCreationDto, Photo>();
             CreateMap<UserForRegisterDto, User>();
+            CreateMap<MessageFromCreationDto, Message>();
         }
     }
 }
