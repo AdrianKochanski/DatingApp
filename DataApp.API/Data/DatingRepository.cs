@@ -113,14 +113,49 @@ namespace DataApp.API.Data
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public Task<PageList<Message>> GetMessagesForUser()
+        public async Task<PageList<Message>> GetMessagesForUser(MessageParams messageParams)
         {
-            throw new NotImplementedException();
+            var messages = _context.Messages
+                .Include(u => u.Sender).ThenInclude(p => p.Photos)
+                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+                .AsQueryable();
+            
+            switch(messageParams.MessageContainer)
+            {
+                case "Inbox":
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId 
+                        && u.RecipientDeleted == false);
+                    break;
+                case "Outbox":
+                    messages = messages.Where(u => u.SenderId == messageParams.UserId 
+                        && u.SenderDeleted == false);
+                    break;
+                default:
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId 
+                        && u.IsRead == false && u.RecipientDeleted == false);
+                    break;
+            }
+            messages = messages.OrderByDescending(d => d.MessageSent);
+            return await PageList<Message>.CreateAsync(
+                messages, 
+                messageParams.PageNumber, 
+                messageParams.pageSize
+            );
         }
 
-        public Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
         {
-            throw new NotImplementedException();
+            return await _context.Messages
+                .Include(u => u.Sender).ThenInclude(p => p.Photos)
+                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+                .Where(m => m.SenderId == userId 
+                         && m.SenderDeleted == false 
+                         && m.RecipientId == recipientId
+                         || m.SenderId == recipientId 
+                         && m.RecipientId == userId
+                         && m.RecipientDeleted == false)
+                .OrderBy(m => m.MessageSent)
+                .ToListAsync();
         }
     }
 }
