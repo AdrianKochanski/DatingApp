@@ -1,3 +1,5 @@
+import { Activity } from './../../_models/activity';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/_services/auth.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -13,10 +15,12 @@ import { SignalRService } from 'src/app/_services/signal-r.service';
 })
 export class MemberMessagesComponent implements OnInit, AfterViewChecked {
   @Input() recipientId: number;
+  activityNotified = false;
+  inThrottle: boolean;
   messages: Message[];
   newMessage: any = {};
   scrollMessages: HTMLElement;
-  showNewMessage = false;
+  scrollDown = false;
 
   constructor(
     private userService: UserService,
@@ -26,7 +30,7 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngAfterViewChecked(): void {
-    if(this.showNewMessage)
+    if (this.scrollDown)
       this.scrollMessages.scrollTop = this.scrollMessages.scrollHeight;
   }
 
@@ -35,8 +39,17 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
     this.scrollMessages = document.getElementById("card-messages");
     this.signalRService.newMessage$.subscribe(
       (data) => {
-        if(data == null) return;
+        if (data == null || data.senderId != this.recipientId) return;
         this.messages.push(data);
+      },
+      (error) => {
+        this.alertify.error(error);
+      }
+    );
+    this.signalRService.newActivity$.subscribe(
+      (data) => {
+        if (data == null || data.senderId != this.recipientId) return;
+        this.activityNotified = data.isTyping;
       },
       (error) => {
         this.alertify.error(error);
@@ -45,11 +58,11 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
   }
 
   scrollEvent() {
-    this.showNewMessage = false;
+    this.scrollDown = false;
   }
 
   loadMessages() {
-    this.showNewMessage = true;
+    this.scrollDown = true;
     const currentUserId = +this.authService.decodedToken.nameid;
     this.userService
       .getMessageThred(this.authService.decodedToken.nameid, this.recipientId)
@@ -73,7 +86,7 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage() {
-    this.showNewMessage = true;
+    this.scrollDown = true;
     this.newMessage.RecipientId = this.recipientId;
     this.userService
       .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
@@ -81,7 +94,6 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
         (message: Message) => {
           this.messages.push(message);
           this.signalRService.broadcastNewMessage(message);
-          this.newMessage = {};
         },
         (error) => {
           this.alertify.error(error);
@@ -93,6 +105,22 @@ export class MemberMessagesComponent implements OnInit, AfterViewChecked {
     element.classList.remove("hidden");
     setTimeout(() => {
       element.classList.add("hidden");
+    }, 1000);
+  }
+
+  onInput(value: string) {
+    let activity: Activity = {
+      isTyping: false,
+      recipientId: this.recipientId,
+      senderId: +this.authService.decodedToken.nameid,
+    };
+    if(!value) this.signalRService.broadcastNewActivity(activity);
+    if (this.inThrottle) return;
+    activity.isTyping = true;
+    if (value) this.signalRService.broadcastNewActivity(activity);
+    this.inThrottle = true;
+    setTimeout(() => {
+      this.inThrottle = false;
     }, 1000);
   }
 }

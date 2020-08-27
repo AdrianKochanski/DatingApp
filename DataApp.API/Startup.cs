@@ -76,7 +76,9 @@ namespace DataApp.API
                         }
                     };
                 });
-            services.AddSignalR();
+            services.AddSignalR(options => {
+                options.EnableDetailedErrors = true;
+            });
             services.AddSingleton<IUserIdProvider, MyCustomProvider>();
             services.AddScoped<LogUserActivity>();
         }

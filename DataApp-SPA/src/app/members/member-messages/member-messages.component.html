@@ -42,10 +42,17 @@
       </li>
     </ul>
 
+    <div *ngIf="activityNotified" class="loadingContainer">
+      <div class="ball1"></div>
+      <div class="ball2"></div>
+      <div class="ball3"></div>
+    </div>
+
     <div class="card-footer">
       <form #messageForm="ngForm" (ngSubmit)="messageForm.valid && sendMessage()">
         <div class="input-group">
           <input type="text"
+            (input)="onInput($event.srcElement.value)"
             class="form-control input-sm"
             placeholder="send a private message"
             [(ngModel)]="newMessage.Content"

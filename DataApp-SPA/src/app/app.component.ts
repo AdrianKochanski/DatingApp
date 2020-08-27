@@ -20,7 +20,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.startConnection();
-    this.signalRService.listenNewMessages();  
+    this.signalRService.listenNewMessages();
+    this.signalRService.listenNewActivities();
     const user: User = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("token");
     if (token) {

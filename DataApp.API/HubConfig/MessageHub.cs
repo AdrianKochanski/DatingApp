@@ -19,6 +19,14 @@ namespace DataApp.API.HubConfig
                 await Clients.Client(connectionId).SendAsync("newMessage", data);
             }
         }
+
+        public async Task BroadcastNewActivity(UserActivityDto data)
+        {
+            foreach (var connectionId in _connections.GetConnections(data.RecipientId.ToString()))
+            {
+                await Clients.Client(connectionId).SendAsync("newActivity", data);
+            }
+        }
         
         public string GetConnectionId() => Context.ConnectionId;
 
