@@ -9,6 +9,8 @@ using DataApp.API.Helpers;
 using DataApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using DataApp.API.HubConfig;
 
 namespace DataApp.API.Controllers
 {   
@@ -20,11 +22,14 @@ namespace DataApp.API.Controllers
     {
         private readonly IDatingRepository _repo;
         private readonly IMapper _mapper;
+        private IHubContext<MessageHub> _hubContext;
         public MessagesController(
             IDatingRepository repo, 
-            IMapper mapper) {
+            IMapper mapper,
+            IHubContext<MessageHub> hubContext) {
             _repo = repo;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         [HttpGet("{id}", Name = "GetMessage")]
@@ -82,6 +87,8 @@ namespace DataApp.API.Controllers
             var messageFromRepo = await _repo.GetMessagesForUser(messageParams);
 
             var messages = _mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
+
+            //damessages = messages.DistinctBy(m => m.RecipientId);
 
             Response.AddPagination(
                 messageFromRepo.CurrentPage, 

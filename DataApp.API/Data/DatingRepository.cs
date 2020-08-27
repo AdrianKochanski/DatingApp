@@ -135,9 +135,12 @@ namespace DataApp.API.Data
                         && u.IsRead == false && u.RecipientDeleted == false);
                     break;
             }
-            messages = messages.OrderByDescending(d => d.MessageSent);
-            return await PageList<Message>.CreateAsync(
-                messages, 
+            
+            var messagesEnum = await messages
+            .OrderByDescending(d => d.MessageSent)
+            .ToListAsync();
+            return PageList<Message>.CreateEnumerable (
+                messagesEnum.DistinctBy(m => m.RecipientId), 
                 messageParams.PageNumber, 
                 messageParams.pageSize
             );

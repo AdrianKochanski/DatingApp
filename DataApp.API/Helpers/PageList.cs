@@ -26,5 +26,12 @@ namespace DataApp.API.Helpers
                 var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
                 return new PageList<T>(items, count, pageNumber, pageSize);
             }
+
+        public static PageList<T> CreateEnumerable(
+            IEnumerable<T> source, int pageNumber, int pageSize) {
+            var count = source.Count();
+            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            return new PageList<T>(items, count, pageNumber, pageSize);
+        }
     }
 }

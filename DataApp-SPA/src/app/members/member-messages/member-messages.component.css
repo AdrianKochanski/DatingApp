@@ -8,12 +8,6 @@
   padding: 0;
 }
 
-.chat li{
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px dotted #b3a9a9;
-}
-
 .rounded-circle {
   height: 50px;
   width: 50px;
@@ -22,4 +16,31 @@
 .card-body {
   overflow-y: scroll;
   height: 400px;
+}
+
+.chat li{
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.mymessage {
+  padding: 5px;
+  background-color: royalblue;
+  border-radius: 30%;
+}
+
+.hismessage {
+  padding: 5px;
+  background-color: coral;
+  border-radius: 30%;
+}
+
+.timeago {
+  background-color: white;
+  border-radius: 30%;
+  border: 1px solid black;
+}
+
+.hidden {
+  display: none;
 }

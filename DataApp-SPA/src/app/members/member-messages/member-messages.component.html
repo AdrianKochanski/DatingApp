@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-body">
+  <div class="card-body" id="card-messages" (scroll)="scrollEvent()">
     <div *ngIf="messages?.length === 0">
       <p>No messages yet... say hello to start conversation</p>
     </div>
@@ -7,34 +7,34 @@
     <ul class="chat">
       <li *ngFor="let message of messages">
 
-        <div *ngIf="message.senderId == recipientId">
+        <div *ngIf="message.senderId == recipientId" class="hismessage" (click)="ShowTimeAgo(histimeago)">
           <span class="chat-img float-left">
             <img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle">
           </span>
           <div class="chat-body">
-          <div class="header">
-            <strong class="primary-font">{{message.senderKnownAs}}</strong>
-            <small class="text-muted float-right">
-              <span class="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
-            </small>
-          </div>
-          <p>{{message.content}}</p>
+            <div class="header">
+              <strong class="primary-font float-left mr-2">{{message.senderKnownAs}}</strong>
+              <small #histimeago class="text-muted float-right timeago hidden ml-2">
+                <span class="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
+              </small>
+            </div>
+            <p>{{message.content}}</p>
           </div>
         </div>
 
 
-        <div *ngIf="message.senderId != recipientId">
+        <div *ngIf="message.senderId != recipientId" class="mymessage" (click)="ShowTimeAgo(mytimeago)">
           <span class="chat-img float-right">
             <img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle">
           </span>
           <div class="chat-body">
           <div class="header">
-            <small class="text-muted">
+            <small #mytimeago class="text-muted timeago float-left hidden mr-2">
               <span class="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
               <span *ngIf="!message.isRead" class="text-danger">(unread)</span>
               <span *ngIf="message.isRead" class="text-success">(Read {{message.dateRead | timeAgo}})</span>
             </small>
-            <strong class="primary-font float-right">{{message.senderKnownAs}}</strong>
+            <strong class="primary-font float-right ml-2">{{message.senderKnownAs}}</strong>
           </div>
           <p>{{message.content}}</p>
         </div>

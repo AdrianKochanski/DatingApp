@@ -27,6 +27,10 @@ export class AuthService {
     this.photoUrl.next(photoUrl);
   }
 
+  getToken() {
+    return localStorage.getItem("token");
+  }
+
   login(model: any) {
     return this.http.post(this.baseUrl + 'login', model)
       .pipe(
